@@ -1,0 +1,16 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{1C029CA3-429A-ACB9-522E-A4B71717B548}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "Shattered",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
+		}
+	]
+}
