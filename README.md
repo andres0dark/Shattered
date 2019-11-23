@@ -4,4 +4,8 @@ Shattered is a couch co-op fighting game. The goal is to break the blocks undern
 
 ## Project Proposal
 
-[View the initial Project Proposal Oct 6 2019](./Documents/CSCI5920_FinalProjectProposal_SethMiers.pdf)
+[View the initial Project Proposal Oct 6 2019](./Documents/ProjectProposal/CSCI5920_FinalProjectProposal_SethMiers.pdf)
+
+## Functional Minimum
+
+[View the Funcitonal Minimum Report Nov 22 2019](./Documents/FunctionalMinimum/CSCI5920_FinalProjectProposal_SethMiers.pdf)
