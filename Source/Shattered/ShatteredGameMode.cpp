@@ -16,4 +16,5 @@ AShatteredGameMode::AShatteredGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+
 }

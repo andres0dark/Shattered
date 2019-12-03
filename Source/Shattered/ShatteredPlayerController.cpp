@@ -3,25 +3,29 @@
 #include "ShatteredPlayerController.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
+#include "GameFramework/Pawn.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "ShatteredCharacter.h"
 #include "Engine/World.h"
+#include "Engine.h"
 
 AShatteredPlayerController::AShatteredPlayerController()
 {
-	bShowMouseCursor = true;
-	DefaultMouseCursor = EMouseCursor::Crosshairs;
+	bAutoManageActiveCameraTarget = false;
+
+	// the player does not start hammering or jumping
+	Hammering = false;
+	CanHammer = true;
 }
 
 void AShatteredPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
+}
 
-	// keep updating the destination every tick while desired
-	if (bMoveToMouseCursor)
-	{
-		MoveToMouseCursor();
-	}
+void AShatteredPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
 void AShatteredPlayerController::SetupInputComponent()
@@ -29,84 +33,83 @@ void AShatteredPlayerController::SetupInputComponent()
 	// set up gameplay key bindings
 	Super::SetupInputComponent();
 
-	InputComponent->BindAction("SetDestination", IE_Pressed, this, &AShatteredPlayerController::OnSetDestinationPressed);
-	InputComponent->BindAction("SetDestination", IE_Released, this, &AShatteredPlayerController::OnSetDestinationReleased);
+	// Jump
+	InputComponent->BindAction("Jump", IE_Pressed, this, &AShatteredPlayerController::StartJumping);
+	InputComponent->BindAction("Jump", IE_Released, this, &AShatteredPlayerController::StopJumping);
 
-	// support touch devices 
-	InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &AShatteredPlayerController::MoveToTouchLocation);
-	InputComponent->BindTouch(EInputEvent::IE_Repeat, this, &AShatteredPlayerController::MoveToTouchLocation);
+	// Hammer
+	InputComponent->BindAction("Hammer", IE_Pressed, this, &AShatteredPlayerController::StartHammering);
+	InputComponent->BindAction("Hammer", IE_Released, this, &AShatteredPlayerController::StopHammering);
 
-	InputComponent->BindAction("ResetVR", IE_Pressed, this, &AShatteredPlayerController::OnResetVR);
+	// Move
+	InputComponent->BindAxis("MoveForward", this, &AShatteredPlayerController::MoveForward);
+	InputComponent->BindAxis("MoveRight", this, &AShatteredPlayerController::MoveRight);
 }
 
-void AShatteredPlayerController::OnResetVR()
+void AShatteredPlayerController::MoveForward(float AxisValue)
 {
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
-}
-
-void AShatteredPlayerController::MoveToMouseCursor()
-{
-	if (UHeadMountedDisplayFunctionLibrary::IsHeadMountedDisplayEnabled())
+	FVector Direction = FVector(1.f, 0, 0);
+	AShatteredCharacter* ControlledPlayer = Cast<AShatteredCharacter>(GetPawn());
+	if (!CanHammer)
 	{
-		if (AShatteredCharacter* MyPawn = Cast<AShatteredCharacter>(GetPawn()))
-		{
-			if (MyPawn->GetCursorToWorld())
-			{
-				UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, MyPawn->GetCursorToWorld()->GetComponentLocation());
-			}
-		}
+		ControlledPlayer->AddMovementInput(Direction, 0.001f * AxisValue);
+	}
+	else if (ControlledPlayer->GetCharacterMovement()->MovementMode == MOVE_Falling)
+	{
+		ControlledPlayer->AddMovementInput(Direction, 0.3f*AxisValue);
 	}
 	else
 	{
-		// Trace to see what is under the mouse cursor
-		FHitResult Hit;
-		GetHitResultUnderCursor(ECC_Visibility, false, Hit);
-
-		if (Hit.bBlockingHit)
-		{
-			// We hit something, move there
-			SetNewMoveDestination(Hit.ImpactPoint);
-		}
+		ControlledPlayer->AddMovementInput(Direction, AxisValue);
 	}
 }
 
-void AShatteredPlayerController::MoveToTouchLocation(const ETouchIndex::Type FingerIndex, const FVector Location)
+void AShatteredPlayerController::MoveRight(float AxisValue)
 {
-	FVector2D ScreenSpaceLocation(Location);
-
-	// Trace to see what is under the touch location
-	FHitResult HitResult;
-	GetHitResultAtScreenPosition(ScreenSpaceLocation, CurrentClickTraceChannel, true, HitResult);
-	if (HitResult.bBlockingHit)
+	FVector Direction = FVector(0, 1.f, 0);
+	AShatteredCharacter* ControlledPlayer = Cast<AShatteredCharacter>(GetPawn());
+	if (!CanHammer)
 	{
-		// We hit something, move there
-		SetNewMoveDestination(HitResult.ImpactPoint);
+		ControlledPlayer->AddMovementInput(Direction, 0.001f*AxisValue);
 	}
-}
-
-void AShatteredPlayerController::SetNewMoveDestination(const FVector DestLocation)
-{
-	APawn* const MyPawn = GetPawn();
-	if (MyPawn)
+	else if (ControlledPlayer->GetCharacterMovement()->MovementMode == MOVE_Falling)
 	{
-		float const Distance = FVector::Dist(DestLocation, MyPawn->GetActorLocation());
-
-		// We need to issue move command only if far enough in order for walk animation to play correctly
-		if ((Distance > 120.0f))
-		{
-			UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, DestLocation);
-		}
+		ControlledPlayer->AddMovementInput(Direction, 0.3f * AxisValue);;
+	}
+	else
+	{
+		ControlledPlayer->AddMovementInput(Direction, AxisValue);
 	}
 }
 
-void AShatteredPlayerController::OnSetDestinationPressed()
+void AShatteredPlayerController::StartJumping()
 {
-	// set flag to keep updating destination until released
-	bMoveToMouseCursor = true;
+	FVector Direction = FVector(0, 0, 0.f);
+	AShatteredCharacter* ControlledPlayer = Cast<AShatteredCharacter>(GetPawn());
+	ControlledPlayer->JumpMaxHoldTime = 0.2f;
+	ControlledPlayer->Jump();
 }
 
-void AShatteredPlayerController::OnSetDestinationReleased()
+void AShatteredPlayerController::StopJumping()
 {
-	// clear flag to indicate we should stop updating the destination
-	bMoveToMouseCursor = false;
+	AShatteredCharacter* ControlledPlayer = Cast<AShatteredCharacter>(GetPawn());
+	ControlledPlayer->StopJumping();
+}
+
+void AShatteredPlayerController::StartHammering()
+{
+	Hammering = true;
+	CanHammer = false;
+	AShatteredCharacter* ControlledPlayer = Cast<AShatteredCharacter>(GetPawn());
+	ControlledPlayer->StopJumping();
+	//ControlledPlayer->GetCharacterMovement()->GravityScale = 0;
+	ControlledPlayer->GetMesh()->SetAllPhysicsLinearVelocity(FVector(0, 0, 0));
+}
+
+void AShatteredPlayerController::StopHammering()
+{
+	Hammering = false;
+	//AShatteredCharacter* ControlledPlayer = Cast<AShatteredCharacter>(GetPawn());
+	//ControlledPlayer->GetMesh()->SetAllPhysicsLinearVelocity(FVector(0, 0, 0));
+	//ControlledPlayer->GetCharacterMovement()->GravityScale = 2.2;
 }

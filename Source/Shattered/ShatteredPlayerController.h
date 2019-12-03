@@ -14,30 +14,33 @@ class AShatteredPlayerController : public APlayerController
 public:
 	AShatteredPlayerController();
 
-protected:
-	/** True if the controlled character should navigate to the mouse cursor. */
-	uint32 bMoveToMouseCursor : 1;
+	//Properties
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool Hammering;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool CanHammer;
 
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 	// Begin PlayerController interface
 	virtual void PlayerTick(float DeltaTime) override;
 	virtual void SetupInputComponent() override;
 	// End PlayerController interface
 
-	/** Resets HMD orientation in VR. */
-	void OnResetVR();
-
-	/** Navigate player to the current mouse cursor location. */
-	void MoveToMouseCursor();
-
-	/** Navigate player to the current touch location. */
-	void MoveToTouchLocation(const ETouchIndex::Type FingerIndex, const FVector Location);
-	
-	/** Navigate player to the given world location. */
-	void SetNewMoveDestination(const FVector DestLocation);
-
-	/** Input handlers for SetDestination action. */
-	void OnSetDestinationPressed();
-	void OnSetDestinationReleased();
+private:
+	UFUNCTION()
+	void MoveForward(float AxisValue);
+	UFUNCTION()
+	void MoveRight(float AxisValue);
+	UFUNCTION()
+	void StartJumping();
+	UFUNCTION()
+	void StopJumping();
+	UFUNCTION()
+	void StartHammering();
+	UFUNCTION()
+	void StopHammering();
 };
 
 
