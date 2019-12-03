@@ -84,10 +84,12 @@ void AShatteredPlayerController::MoveRight(float AxisValue)
 
 void AShatteredPlayerController::StartJumping()
 {
-	FVector Direction = FVector(0, 0, 0.f);
-	AShatteredCharacter* ControlledPlayer = Cast<AShatteredCharacter>(GetPawn());
-	ControlledPlayer->JumpMaxHoldTime = 0.2f;
-	ControlledPlayer->Jump();
+	if (CanHammer)
+	{
+		AShatteredCharacter* ControlledPlayer = Cast<AShatteredCharacter>(GetPawn());
+		ControlledPlayer->JumpMaxHoldTime = 0.2f;
+		ControlledPlayer->Jump();
+	}
 }
 
 void AShatteredPlayerController::StopJumping()
