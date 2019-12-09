@@ -50,6 +50,10 @@ void AShatteredPlayerController::MoveForward(float AxisValue)
 {
 	FVector Direction = FVector(1.f, 0, 0);
 	AShatteredCharacter* ControlledPlayer = Cast<AShatteredCharacter>(GetPawn());
+	if (!ControlledPlayer)
+	{
+		return;
+	}
 	if (!CanHammer)
 	{
 		ControlledPlayer->AddMovementInput(Direction, 0.001f * AxisValue);
@@ -68,6 +72,10 @@ void AShatteredPlayerController::MoveRight(float AxisValue)
 {
 	FVector Direction = FVector(0, 1.f, 0);
 	AShatteredCharacter* ControlledPlayer = Cast<AShatteredCharacter>(GetPawn());
+	if (!ControlledPlayer)
+	{
+		return;
+	}
 	if (!CanHammer)
 	{
 		ControlledPlayer->AddMovementInput(Direction, 0.001f*AxisValue);
@@ -87,6 +95,10 @@ void AShatteredPlayerController::StartJumping()
 	if (CanHammer)
 	{
 		AShatteredCharacter* ControlledPlayer = Cast<AShatteredCharacter>(GetPawn());
+		if (!ControlledPlayer)
+		{
+			return;
+		}
 		ControlledPlayer->JumpMaxHoldTime = 0.2f;
 		ControlledPlayer->Jump();
 	}
@@ -95,6 +107,10 @@ void AShatteredPlayerController::StartJumping()
 void AShatteredPlayerController::StopJumping()
 {
 	AShatteredCharacter* ControlledPlayer = Cast<AShatteredCharacter>(GetPawn());
+	if (!ControlledPlayer)
+	{
+		return;
+	}
 	ControlledPlayer->StopJumping();
 }
 
@@ -103,9 +119,16 @@ void AShatteredPlayerController::StartHammering()
 	Hammering = true;
 	CanHammer = false;
 	AShatteredCharacter* ControlledPlayer = Cast<AShatteredCharacter>(GetPawn());
+	if (!ControlledPlayer)
+	{
+		return;
+	}
 	ControlledPlayer->StopJumping();
 	//ControlledPlayer->GetCharacterMovement()->GravityScale = 0;
 	ControlledPlayer->GetMesh()->SetAllPhysicsLinearVelocity(FVector(0, 0, 0));
+
+	FOutputDeviceNull ar;
+	this->CallFunctionByNameWithArguments(TEXT("StartHammering_BP"), ar, NULL, true);
 }
 
 void AShatteredPlayerController::StopHammering()
@@ -114,4 +137,6 @@ void AShatteredPlayerController::StopHammering()
 	//AShatteredCharacter* ControlledPlayer = Cast<AShatteredCharacter>(GetPawn());
 	//ControlledPlayer->GetMesh()->SetAllPhysicsLinearVelocity(FVector(0, 0, 0));
 	//ControlledPlayer->GetCharacterMovement()->GravityScale = 2.2;
+	FOutputDeviceNull ar;
+	this->CallFunctionByNameWithArguments(TEXT("StopHammering_BP"), ar, NULL, true);
 }

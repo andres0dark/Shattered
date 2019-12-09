@@ -42,5 +42,3 @@ private:
 	UFUNCTION()
 	void StopHammering();
 };
-
-

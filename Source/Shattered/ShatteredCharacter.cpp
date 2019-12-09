@@ -13,7 +13,7 @@
 AShatteredCharacter::AShatteredCharacter()
 {
 	// Set size for player capsule
-	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+	GetCapsuleComponent()->InitCapsuleSize(50.f, 94.0f);
 
 	// Don't rotate character to camera direction
 	bUseControllerRotationPitch = false;
@@ -26,7 +26,7 @@ AShatteredCharacter::AShatteredCharacter()
 	GetCharacterMovement()->bConstrainToPlane = true;
 	GetCharacterMovement()->bSnapToPlaneAtStart = true;
 	GetCharacterMovement()->MaxWalkSpeed = 1100.0f;
-	GetCharacterMovement()->MaxAcceleration = 5000.0f;
+	GetCharacterMovement()->MaxAcceleration = 10000.0f;
 	GetCharacterMovement()->JumpZVelocity = 800.0f;
 
 	GetCharacterMovement()->BrakingDecelerationFalling = 800.f;
