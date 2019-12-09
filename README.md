@@ -9,3 +9,38 @@ Shattered is a couch co-op fighting game. The goal is to break the blocks undern
 ## Functional Minimum
 
 [View the Funcitonal Minimum Report Nov 22 2019](./Documents/FunctionalMinimum/CSCI5920_FinalProjectProposal_SethMiers.pdf)
+
+## Final Report
+
+[View the Final Report Dec 09 2019](./Documents/FunctionalMinimum/CSCI5920_FinalProjectProposal_SethMiers.pdf)
+
+
+<br><br>
+## TODO
+
+ * Create actual graphics for the select screen
+ * Add ability to kill opponent with hammer (Demonstrate the ragdoll)
+ * Create a few more head models
+ * Create a few more hammer models
+ * Show 3D models on the select screen with the proper (selected) color
+ * Create a post score/victor screen
+ * Animate the UMG widget
+ * Proper collision with the lava floor (so it looks real)
+ * Add in a 'fire splash' in the lava when the character dies
+ * Create new lava texture to match theme
+ * Adjust lighting
+ * Add in 'join' instead of just going to the player select
+ * Add wwise music
+ * Add in footstep sounds
+ * Add in hammer sounds
+ * Adjust jump height so that players can jump on each other
+ * Random spawn corner (instead of the same corner every time)
+ * Menu that asks to play again instead of going straight back to the main menu
+ * Animate 'flip' graphic when a player joins
+ * Speed up block charge rate slightly
+ * Flash the character's emissive the closer we get to fully charged
+ * Add in hammer vibration
+ * Add invisible respawn blocks (Blocks that stop the hammer distance from continuing and respawn the now empty block after a set amount of time)
+ * Victor phrases from LUT
+ * Animations in MainMenu
+ 
