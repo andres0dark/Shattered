@@ -17,6 +17,9 @@ Shattered is a couch co-op fighting game. The goal is to break the blocks undern
 
 <br><br>
 ## TODO
+ * Speed up charge speed
+ * Speed up single block hit speed
+ * Players can still jump off broken blocks
  * Clicking hammer twice quickly causes the block-hit vector to be reset
  * There is a bug where when 0 players are ready the game still plays
  * Create actual graphics for the select screen
