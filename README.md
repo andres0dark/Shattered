@@ -17,7 +17,7 @@ Shattered is a couch co-op fighting game. The goal is to break the blocks undern
 
 <br><br>
 ## TODO
-
+ * There is a bug where when 0 players are ready the game still plays
  * Create actual graphics for the select screen
  * Add ability to kill opponent with hammer (Demonstrate the ragdoll)
  * Create a few more head models
